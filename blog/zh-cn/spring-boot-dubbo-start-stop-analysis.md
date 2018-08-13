@@ -26,10 +26,10 @@ public class DubboConsumerDemo {
 
 以Java 8为例，通过查阅JVM语言规范[1]，在12.8章节中有清晰的描述：
 
-A program terminates all its activity and *exits* when one of two things happens:
-
-- All the threads that are not daemon threads terminate.
-- Some thread invokes the `exit` method of class `Runtime` or class `System`, and the `exit` operation is not forbidden by the security manager.
+> A program terminates all its activity and *exits* when one of two things happens:
+>
+> - All the threads that are not daemon threads terminate.
+> - Some thread invokes the `exit` method of class `Runtime` or class `System`, and the `exit` operation is not forbidden by the security manager.
 
 也就是说，导致JVM的退出只有2种情况：
 
@@ -105,7 +105,7 @@ run:1107, SpringApplication (org.springframework.boot)
 main:35, DubboConsumerDemo (com.alibaba.boot.dubbo.demo.consumer.bootstrap)
 ```
 
-可以看到，spring-boot应用在启动的过程中，由于默认启动了Tomcat暴露HTTP服务，所以执行到了上述方法，而Tomcat启动的所有的线程，默认都是daemon线程，例如监听请求的Acceptor，工作线程池等等，如果这里不加控制的话，启动完成之后JVM也会退出。因此需要显示的启动一个线程，在某个条件下进行持续等待，从而避免线程退出。
+可以看到，spring-boot应用在启动的过程中，由于默认启动了Tomcat暴露HTTP服务，所以执行到了上述方法，而Tomcat启动的所有的线程，默认都是daemon线程，例如监听请求的Acceptor，工作线程池等等，如果这里不加控制的话，启动完成之后JVM也会退出。因此需要显式地启动一个线程，在某个条件下进行持续等待，从而避免线程退出。
 
 下面我们在深挖一下，在Tomcat的`this.tomcat.getServer().await()`这个方法中，线程是如何实现不退出的。这里为了阅读方便，去掉了不相关的代码。
 
@@ -203,7 +203,7 @@ run:929, AbstractApplicationContext$2 (org.springframework.context.support)
 
 #### 彩蛋
 
-在` Intellij IDEA`中运行了如下的单元测试，创建一个线程执行睡眠1000秒的操作，我们惊奇的发现，代码并没有线程执行完就退出了，这又是为什么呢？（被创建的线程是非daemon线程）
+在`Intellij IDEA`中运行了如下的单元测试，创建一个线程执行睡眠1000秒的操作，我们惊奇的发现，代码并没有线程执行完就退出了，这又是为什么呢？（被创建的线程是非daemon线程）
 
 ```java
     @Test
