@@ -26,10 +26,10 @@ public class DubboConsumerDemo {
 
 以Java 8为例，通过查阅JVM语言规范[1]，在12.8章节中有清晰的描述：
 
-A program terminates all its activity and *exits* when one of two things happens:
-
-- All the threads that are not daemon threads terminate.
-- Some thread invokes the `exit` method of class `Runtime` or class `System`, and the `exit` operation is not forbidden by the security manager.
+> A program terminates all its activity and *exits* when one of two things happens:
+>
+> - All the threads that are not daemon threads terminate.
+> - Some thread invokes the `exit` method of class `Runtime` or class `System`, and the `exit` operation is not forbidden by the security manager.
 
 也就是说，导致JVM的退出只有2种情况：
 
