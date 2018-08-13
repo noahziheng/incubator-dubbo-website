@@ -26,10 +26,10 @@ In fact, if you want to answer such a question. We need to abstract this problem
 
 Take Java 8 as an example. By referring to the JVM language specification[1], there is a clear description in Section 12.8:
 
-A program terminates all its activity and *exits* when one of two things happens:
-
-- All the threads that are not daemon threads terminate.
-- Some thread invokes the `exit` method of class `Runtime` or class `System`, and the `exit` operation is not forbidden by the security manager.
+> A program terminates all its activity and *exits* when one of two things happens:
+>
+> - All the threads that are not daemon threads terminate.
+> - Some thread invokes the `exit` method of class `Runtime` or class `System`, and the `exit` operation is not forbidden by the security manager.
 
 Therefore, in view of the above situation, we judge that there must be some non-daemon thread not exiting. All thread information can be seen by `jstack`, including whether they are daemon threads, and `jstack` can be used to find out which threads are non-deamon.
 

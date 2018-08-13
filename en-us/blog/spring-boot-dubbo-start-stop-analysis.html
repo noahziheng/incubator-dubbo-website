@@ -12,7 +12,7 @@
 	<link rel="stylesheet" href="/build/blogDetail.css" />
 </head>
 <body>
-	<div id="root"><div class="blog-detail-page" data-reactroot="" data-reactid="1" data-react-checksum="-789393817"><header class="header-container header-container-normal" data-reactid="2"><div class="header-body" data-reactid="3"><a href="/en-us/index.html" data-reactid="4"><img class="logo" src="/img/dubbo_colorful.png" data-reactid="5"/></a><span class="language-switch language-switch-normal" data-reactid="6">中</span><div class="header-menu" data-reactid="7"><img class="header-menu-toggle" src="/img/menu_gray.png" data-reactid="8"/><ul data-reactid="9"><li class="menu-item menu-item-normal" data-reactid="10"><a href="/en-us/index.html" data-reactid="11">HOME</a></li><li class="menu-item menu-item-normal" data-reactid="12"><a href="/en-us/docs/user/quick-start.html" data-reactid="13">DOCS</a></li><li class="menu-item menu-item-normal menu-item-normal-active" data-reactid="14"><a href="/en-us/blog/index.html" data-reactid="15">BLOG</a></li><li class="menu-item menu-item-normal" data-reactid="16"><a href="/en-us/community/index.html" data-reactid="17">COMMUNITY</a></li></ul></div></div></header><section class="blog-content markdown-body" data-reactid="18"><h1>Source code analysis of spring-boot+Dubbo App start and stop</h1>
+	<div id="root"><div class="blog-detail-page" data-reactroot="" data-reactid="1" data-react-checksum="1809766416"><header class="header-container header-container-normal" data-reactid="2"><div class="header-body" data-reactid="3"><a href="/en-us/index.html" data-reactid="4"><img class="logo" src="/img/dubbo_colorful.png" data-reactid="5"/></a><span class="language-switch language-switch-normal" data-reactid="6">中</span><div class="header-menu" data-reactid="7"><img class="header-menu-toggle" src="/img/menu_gray.png" data-reactid="8"/><ul data-reactid="9"><li class="menu-item menu-item-normal" data-reactid="10"><a href="/en-us/index.html" data-reactid="11">HOME</a></li><li class="menu-item menu-item-normal" data-reactid="12"><a href="/en-us/docs/user/quick-start.html" data-reactid="13">DOCS</a></li><li class="menu-item menu-item-normal menu-item-normal-active" data-reactid="14"><a href="/en-us/blog/index.html" data-reactid="15">BLOG</a></li><li class="menu-item menu-item-normal" data-reactid="16"><a href="/en-us/community/index.html" data-reactid="17">COMMUNITY</a></li></ul></div></div></header><section class="blog-content markdown-body" data-reactid="18"><h1>Source code analysis of spring-boot+Dubbo App start and stop</h1>
 <h3>Introduction</h3>
 <p><a href="https://github.com/apache/incubator-dubbo-spring-boot-project">Dubbo Spring Boot</a> project is dedicated to simplifying the development of the Dubbo RPC framework in the Spring Boot application. It also integrates the feature of Spring Boot:</p>
 <ul>
@@ -32,11 +32,13 @@
 </code></pre>
 <p>In fact, if you want to answer such a question. We need to abstract this problem firstly, that is, a JVM process, under what circumstances will it exit?</p>
 <p>Take Java 8 as an example. By referring to the JVM language specification[1], there is a clear description in Section 12.8:</p>
+<blockquote>
 <p>A program terminates all its activity and <em>exits</em> when one of two things happens:</p>
 <ul>
 <li>All the threads that are not daemon threads terminate.</li>
 <li>Some thread invokes the <code>exit</code> method of class <code>Runtime</code> or class <code>System</code>, and the <code>exit</code> operation is not forbidden by the security manager.</li>
 </ul>
+</blockquote>
 <p>Therefore, in view of the above situation, we judge that there must be some non-daemon thread not exiting. All thread information can be seen by <code>jstack</code>, including whether they are daemon threads, and <code>jstack</code> can be used to find out which threads are non-deamon.</p>
 <pre><code class="language-sh">➜  jstack 57785 | grep tid | grep -v <span class="hljs-string">"daemon"</span>
 <span class="hljs-string">"container-0"</span> <span class="hljs-comment">#37 prio=5 os_prio=31 tid=0x00007fbe312f5800 nid=0x7103 waiting on condition  [0x0000700010144000]</span>
