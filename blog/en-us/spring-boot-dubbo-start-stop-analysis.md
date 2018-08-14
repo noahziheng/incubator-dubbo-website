@@ -196,7 +196,7 @@ Therefore, the normal application will execute the above ShutdownHook during the
 
 In the example of DubboProvider, we see that Provider doesn't start Tomcat to provide HTTP service, then how does the program stays alive without exiting? We will answer this question in the next article.
 
-#### Easter Eggs/Extra/Bonus/Surprise(?)
+#### Notice
 
 By running the following unit test which create a thread in `Intellij IDEA` , we are surprised to find that the program exits with less than 1000s. Why?(The thread being created is a non-daemon thread)
 
